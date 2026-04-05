@@ -7,6 +7,7 @@ import { registerSensible } from "./plugins/sensible.plugin";
 import { registerSwagger } from "./plugins/swagger.plugin";
 import { registerRateLimit } from "./plugins/rateLimit.plugin";
 import { registerMetrics } from "./plugins/metrics.plugin";
+import { registerMongoLogger } from "./plugins/mongoLogger.plugin";
 import { globalErrorHandler } from "./middlewares/error.middleware";
 
 import { authRoutes } from "./modules/auth/auth.routes";
@@ -36,6 +37,7 @@ export const buildApp = async () => {
   await registerSwagger(app);
   await registerRateLimit(app);
   await registerMetrics(app);
+  await registerMongoLogger(app);
 
   // Global error handler
   app.setErrorHandler(globalErrorHandler);
