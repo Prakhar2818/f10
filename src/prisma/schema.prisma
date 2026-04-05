@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum RecordType {
+  INCOME
+  EXPENSE
+}
+
+enum RecordStatus {
+  ACTIVE
+  DELETED
+}
+
+model Role {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  users       User[]
+  createdAt   DateTime @default(now())
+}
+
+model User {
+  id             String           @id @default(uuid())
+  fullName       String
+  email          String           @unique
+  passwordHash   String
+  status         UserStatus       @default(ACTIVE)
+  roleId         String
+  role           Role             @relation(fields: [roleId], references: [id])
+  records        FinancialRecord[]
+  refreshTokens  RefreshSession[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  lastLoginAt    DateTime?
+}
+
+model FinancialRecord {
+  id          String       @id @default(uuid())
+  amount      Float
+  type        RecordType
+  category    String
+  recordDate  DateTime
+  description String?
+  status      RecordStatus @default(ACTIVE)
+  createdById String
+  createdBy   User         @relation(fields: [createdById], references: [id])
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model RefreshSession {
+  id               String   @id @default(uuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id])
+  refreshTokenHash String
+  ipAddress        String?
+  userAgent        String?
+  expiresAt        DateTime
+  createdAt        DateTime @default(now())
+  revokedAt        DateTime?
+}
