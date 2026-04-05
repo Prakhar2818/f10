@@ -47,6 +47,15 @@ export const buildApp = async () => {
     };
   });
 
+  app.get("/health", async () => {
+    return {
+      success: true,
+      status: "ok",
+      uptime: process.uptime(),
+      timestamp: new Date().toISOString(),
+    };
+  });
+
   await app.register(authRoutes, { prefix: "/api/v1/auth" });
   await app.register(healthRoutes, { prefix: "/api/v1/health" });
   await app.register(usersRoutes, { prefix: "/api/v1/users" });
