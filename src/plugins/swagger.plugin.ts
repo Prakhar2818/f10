@@ -7,7 +7,7 @@ export async function registerSwagger(app: FastifyInstance) {
   await app.register(swagger, {
     openapi: {
       info: {
-        title: "Finance Dashboard API",
+        title: "F10",
         description: "API documentation for Finance Dashboard Backend",
         version: "1.0.0",
       },
