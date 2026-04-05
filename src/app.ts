@@ -12,6 +12,7 @@ import { globalErrorHandler } from "./middlewares/error.middleware";
 import { authRoutes } from "./modules/auth/auth.routes";
 import { usersRoutes } from "./modules/users/users.routes";
 import { healthRoutes } from "./modules/health/health.routes";
+import recordsRoutes from './modules/records/records.routes';
 
 export const buildApp = async () => {
   const app = Fastify({
@@ -49,6 +50,7 @@ export const buildApp = async () => {
   await app.register(authRoutes, { prefix: "/api/v1/auth" });
   await app.register(healthRoutes, { prefix: "/api/v1/health" });
   await app.register(usersRoutes, { prefix: "/api/v1/users" });
+  app.register(recordsRoutes, { prefix: '/api/v1/records' });
 
   return app;
 };
