@@ -1,6 +1,7 @@
 import { authRepository } from "./auth.repository";
 import { RegisterInput, LoginInput } from "./auth.schema";
 import { hashPassword, comparePassword } from "../../utils/hash";
+import { AppError } from "../../utils/appError";
 import {
   generateAccessToken,
   generateRefreshToken,
@@ -13,7 +14,7 @@ export const authService = {
     const existingUser = await authRepository.findUserByEmail(payload.email);
 
     if (existingUser) {
-      throw new Error("User already exists with this email");
+      throw new AppError("User already exists with this email", 409);
     }
 
     const roleName = "VIEWER";
@@ -21,7 +22,7 @@ export const authService = {
     const role = await authRepository.findRoleByName(roleName);
 
     if (!role) {
-      throw new Error("Invalid role");
+      throw new AppError("Invalid role", 400);
     }
 
     const passwordHash = await hashPassword(payload.password);
@@ -49,11 +50,11 @@ export const authService = {
     const user = await authRepository.findUserByEmail(payload.email);
 
     if (!user) {
-      throw new Error("Invalid email or password");
+      throw new AppError("Invalid email or password", 401);
     }
 
     if (user.status !== "ACTIVE") {
-      throw new Error("Your account is inactive");
+      throw new AppError("Your account is inactive", 403);
     }
 
     const isPasswordValid = await comparePassword(
@@ -62,7 +63,7 @@ export const authService = {
     );
 
     if (!isPasswordValid) {
-      throw new Error("Invalid email or password");
+      throw new AppError("Invalid email or password", 401);
     }
 
     const jwtPayload = {
@@ -108,13 +109,13 @@ export const authService = {
     const user = await authRepository.findUserById(decoded.userId);
 
     if (!user) {
-      throw new Error("User not found");
+      throw new AppError("User not found", 404);
     }
 
     const session = await authRepository.findRefreshSessionByUserId(user.id);
 
     if (!session || session.revokedAt) {
-      throw new Error("Invalid or expired refresh session");
+      throw new AppError("Invalid or expired refresh session", 401);
     }
 
     const isValid = await bcrypt.compare(
@@ -123,7 +124,7 @@ export const authService = {
     );
 
     if (!isValid) {
-      throw new Error("Invalid refresh token");
+      throw new AppError("Invalid refresh token", 401);
     }
 
     const newPayload = {
@@ -166,7 +167,7 @@ export const authService = {
     const user = await authRepository.findUserById(userId);
 
     if (!user) {
-      throw new Error("User not found");
+      throw new AppError("User not found", 404);
     }
 
     return {

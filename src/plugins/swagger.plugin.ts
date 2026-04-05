@@ -1,19 +1,40 @@
-import swagger from '@fastify/swagger';
-import swaggerUI from '@fastify/swagger-ui';
-import { FastifyInstance } from 'fastify';
+import { FastifyInstance } from "fastify";
+import swagger from "@fastify/swagger";
+import swaggerUI from "@fastify/swagger-ui";
 
-export const registerSwagger = async (app: FastifyInstance) => {
+export async function registerSwagger(app: FastifyInstance) {
   await app.register(swagger, {
-    swagger: {
+    openapi: {
       info: {
-        title: 'Finance Dashboard Backend API',
-        description: 'Finance Data Processing and Access Control Backend',
-        version: '1.0.0',
+        title: "Finance Dashboard API",
+        description: "API documentation for Finance Dashboard Backend",
+        version: "1.0.0",
+      },
+      servers: [
+        {
+          url: "http://localhost:3000",
+          description: "Local development server",
+        },
+      ],
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: "http",
+            scheme: "bearer",
+            bearerFormat: "JWT",
+          },
+        },
       },
     },
   });
 
   await app.register(swaggerUI, {
-    routePrefix: '/api/docs',
+    routePrefix: "/docs",
+    uiConfig: {
+      docExpansion: "list",
+      deepLinking: false,
+    },
+    staticCSP: true,
+    transformStaticCSP: (header) => header,
   });
-};
+}

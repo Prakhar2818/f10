@@ -3,6 +3,13 @@ import { recordsController } from "./records.controller";
 import { authenticate } from "../../middlewares/auth.middleware";
 import { authorize } from "../../middlewares/role.middleware";
 import { PERMISSIONS } from "../../utils/permissions";
+import {
+  createRecordSchemaDoc,
+  deleteRecordSchemaDoc,
+  getAllRecordsSchemaDoc,
+  getRecordByIdSchemaDoc,
+  updateRecordSchemaDoc,
+} from "./records.docs";
 
 export default async function recordsRoutes(fastify: FastifyInstance) {
   // CREATE
@@ -10,6 +17,7 @@ export default async function recordsRoutes(fastify: FastifyInstance) {
     "/",
     {
       preHandler: [authenticate, authorize([PERMISSIONS.RECORDS_CREATE])],
+      schema: createRecordSchemaDoc,
     },
     recordsController.createRecord,
   );
@@ -19,6 +27,7 @@ export default async function recordsRoutes(fastify: FastifyInstance) {
     "/",
     {
       preHandler: [authenticate, authorize([PERMISSIONS.RECORDS_READ])],
+      schema: getAllRecordsSchemaDoc,
     },
     recordsController.getAllRecords,
   );
@@ -28,6 +37,7 @@ export default async function recordsRoutes(fastify: FastifyInstance) {
     "/:id",
     {
       preHandler: [authenticate, authorize([PERMISSIONS.RECORDS_READ])],
+      schema: getRecordByIdSchemaDoc,
     },
     recordsController.getRecordById,
   );
@@ -37,6 +47,7 @@ export default async function recordsRoutes(fastify: FastifyInstance) {
     "/:id",
     {
       preHandler: [authenticate, authorize([PERMISSIONS.RECORDS_UPDATE])],
+      schema: updateRecordSchemaDoc,
     },
     recordsController.updateRecord,
   );
@@ -46,6 +57,7 @@ export default async function recordsRoutes(fastify: FastifyInstance) {
     "/:id",
     {
       preHandler: [authenticate, authorize([PERMISSIONS.RECORDS_DELETE])],
+      schema: deleteRecordSchemaDoc,
     },
     recordsController.deleteRecord,
   );

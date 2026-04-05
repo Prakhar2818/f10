@@ -5,6 +5,7 @@ import {
   UpdateUserStatusInput,
 } from "./users.schema";
 import { hashPassword } from "../../utils/hash";
+import { AppError } from "../../utils/appError";
 
 export const usersService = {
   getAllUsers: async () => {
@@ -25,7 +26,7 @@ export const usersService = {
     const user = await usersRepository.findUserById(id);
 
     if (!user) {
-      throw new Error("User not found");
+      throw new AppError("User not found", 404);
     }
 
     return {
@@ -44,14 +45,14 @@ adminCreateUser: async (payload: AdminCreateUserInput) => {
   const existingUser = await usersRepository.findUserByEmail(payload.email);
 
   if (existingUser) {
-    throw new Error("User already exists with this email");
+    throw new AppError("User already exists with this email", 409);
   }
 
   // 2. Get role
   const role = await usersRepository.findRoleByName(payload.role);
 
   if (!role) {
-    throw new Error("Invalid role");
+    throw new AppError("Invalid role", 400);
   }
 
   // 3. Hash password
@@ -79,7 +80,7 @@ adminCreateUser: async (payload: AdminCreateUserInput) => {
     const existingUser = await usersRepository.findUserById(id);
 
     if (!existingUser) {
-      throw new Error("User not found");
+      throw new AppError("User not found", 404);
     }
 
     let roleId: string | undefined = undefined;
@@ -88,7 +89,7 @@ adminCreateUser: async (payload: AdminCreateUserInput) => {
       const role = await usersRepository.findRoleByName(payload.role);
 
       if (!role) {
-        throw new Error("Invalid role");
+        throw new AppError("Invalid role", 400);
       }
 
       roleId = role.id;
@@ -98,7 +99,7 @@ adminCreateUser: async (payload: AdminCreateUserInput) => {
       const emailTaken = await usersRepository.findUserByEmail(payload.email);
 
       if (emailTaken) {
-        throw new Error("Email is already in use");
+        throw new AppError("Email is already in use", 409);
       }
     }
 
@@ -122,7 +123,7 @@ adminCreateUser: async (payload: AdminCreateUserInput) => {
     const existingUser = await usersRepository.findUserById(id);
 
     if (!existingUser) {
-      throw new Error("User not found");
+      throw new AppError("User not found", 404);
     }
 
     const updatedUser = await usersRepository.updateUserStatus(

@@ -3,12 +3,19 @@ import { dashboardController } from "./dashboard.controller";
 import { authenticate } from "../../middlewares/auth.middleware";
 import { authorize } from "../../middlewares/role.middleware";
 import { PERMISSIONS } from "../../utils/permissions";
+import {
+  getCategoryBreakdownSchemaDoc,
+  getMonthlyTrendsSchemaDoc,
+  getRecentActivitySchemaDoc,
+  getSummarySchemaDoc,
+} from "./dashboard.docs";
 
 export default async function dashboardRoutes(fastify: FastifyInstance) {
   fastify.get(
     "/summary",
     {
       preHandler: [authenticate, authorize([PERMISSIONS.DASHBOARD_READ])],
+      schema: getSummarySchemaDoc,
     },
     dashboardController.getSummary,
   );
@@ -17,6 +24,7 @@ export default async function dashboardRoutes(fastify: FastifyInstance) {
     "/category-breakdown",
     {
       preHandler: [authenticate, authorize([PERMISSIONS.DASHBOARD_READ])],
+      schema: getCategoryBreakdownSchemaDoc,
     },
     dashboardController.getCategoryBreakdown,
   );
@@ -25,6 +33,7 @@ export default async function dashboardRoutes(fastify: FastifyInstance) {
     "/recent-activity",
     {
       preHandler: [authenticate, authorize([PERMISSIONS.DASHBOARD_READ])],
+      schema: getRecentActivitySchemaDoc,
     },
     dashboardController.getRecentActivity,
   );
@@ -33,6 +42,7 @@ export default async function dashboardRoutes(fastify: FastifyInstance) {
     "/monthly-trends",
     {
       preHandler: [authenticate, authorize([PERMISSIONS.DASHBOARD_READ])],
+      schema: getMonthlyTrendsSchemaDoc,
     },
     dashboardController.getMonthlyTrends,
   );

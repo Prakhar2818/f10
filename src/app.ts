@@ -8,13 +8,13 @@ import { registerSwagger } from "./plugins/swagger.plugin";
 import { registerRateLimit } from "./plugins/rateLimit.plugin";
 import { registerMetrics } from "./plugins/metrics.plugin";
 import { registerMongoLogger } from "./plugins/mongoLogger.plugin";
-import { globalErrorHandler } from "./middlewares/error.middleware";
+import { registerErrorHandler } from "./plugins/errorHandler";
 
 import { authRoutes } from "./modules/auth/auth.routes";
 import { usersRoutes } from "./modules/users/users.routes";
 import { healthRoutes } from "./modules/health/health.routes";
-import recordsRoutes from './modules/records/records.routes';
-import dashboardRoutes from './modules/dashboard/dashboard.routes';
+import recordsRoutes from "./modules/records/records.routes";
+import dashboardRoutes from "./modules/dashboard/dashboard.routes";
 
 export const buildApp = async () => {
   const app = Fastify({
@@ -39,9 +39,6 @@ export const buildApp = async () => {
   await registerMetrics(app);
   await registerMongoLogger(app);
 
-  // Global error handler
-  app.setErrorHandler(globalErrorHandler);
-
   // Root route
   app.get("/", async () => {
     return {
@@ -53,8 +50,10 @@ export const buildApp = async () => {
   await app.register(authRoutes, { prefix: "/api/v1/auth" });
   await app.register(healthRoutes, { prefix: "/api/v1/health" });
   await app.register(usersRoutes, { prefix: "/api/v1/users" });
-  app.register(recordsRoutes, { prefix: '/api/v1/records' });
-  app.register(dashboardRoutes, { prefix: '/api/v1/dashboard' });
+  app.register(recordsRoutes, { prefix: "/api/v1/records" });
+  app.register(dashboardRoutes, { prefix: "/api/v1/dashboard" });
+
+  await registerErrorHandler(app);
 
   return app;
 };

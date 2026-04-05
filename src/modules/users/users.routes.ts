@@ -3,12 +3,20 @@ import { usersController } from "./users.controller";
 import { authenticate } from "../../middlewares/auth.middleware";
 import { authorize } from "../../middlewares/role.middleware";
 import { PERMISSIONS } from "../../utils/permissions";
+import {
+  adminCreateUserSchemaDoc,
+  getUserByIdSchemaDoc,
+  getUsersSchemaDoc,
+  updateUserSchemaDoc,
+  updateUserStatusSchemaDoc,
+} from "./users.docs";
 
 export const usersRoutes = async (app: FastifyInstance) => {
   app.post(
     "/admin-create",
     {
       preHandler: [authenticate, authorize([PERMISSIONS.USERS_CREATE])],
+      schema: adminCreateUserSchemaDoc,
     },
     usersController.adminCreateUser,
   );
@@ -17,6 +25,7 @@ export const usersRoutes = async (app: FastifyInstance) => {
     "/",
     {
       preHandler: [authenticate, authorize([PERMISSIONS.USERS_READ])],
+      schema: getUsersSchemaDoc,
     },
     usersController.getAllUsers,
   );
@@ -25,6 +34,7 @@ export const usersRoutes = async (app: FastifyInstance) => {
     "/:id",
     {
       preHandler: [authenticate, authorize([PERMISSIONS.USERS_READ])],
+      schema: getUserByIdSchemaDoc,
     },
     usersController.getUserById,
   );
@@ -33,6 +43,7 @@ export const usersRoutes = async (app: FastifyInstance) => {
     "/:id",
     {
       preHandler: [authenticate, authorize([PERMISSIONS.USERS_UPDATE])],
+      schema: updateUserSchemaDoc,
     },
     usersController.updateUser,
   );
@@ -41,6 +52,7 @@ export const usersRoutes = async (app: FastifyInstance) => {
     "/:id/status",
     {
       preHandler: [authenticate, authorize([PERMISSIONS.USERS_DEACTIVATE])],
+      schema: updateUserStatusSchemaDoc,
     },
     usersController.updateUserStatus,
   );

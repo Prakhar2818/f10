@@ -1,4 +1,5 @@
 import { recordsRepository } from "./records.repository";
+import { AppError } from "../../utils/appError";
 import {
   CreateRecordInput,
   RecordFilters,
@@ -21,7 +22,7 @@ export const recordsService = {
     const record = await recordsRepository.findById(id);
 
     if (!record) {
-      throw new Error("Record not found");
+      throw new AppError("Record not found", 404);
     }
 
     return record;
@@ -32,7 +33,7 @@ export const recordsService = {
     const existingRecord = await recordsRepository.findById(id);
 
     if (!existingRecord) {
-      throw new Error("Record not found");
+      throw new AppError("Record not found", 404);
     }
 
     return recordsRepository.update(id, data);
@@ -43,7 +44,7 @@ export const recordsService = {
     const existingRecord = await recordsRepository.findById(id);
 
     if (!existingRecord) {
-      throw new Error("Record not found");
+      throw new AppError("Record not found", 404);
     }
 
     return recordsRepository.softDelete(id);
