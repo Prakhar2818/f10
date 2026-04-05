@@ -5,6 +5,10 @@ dotenv.config();
 export const env = {
   PORT: Number(process.env.PORT) || 5000,
   NODE_ENV: process.env.NODE_ENV || 'development',
+  APP_URL:
+    process.env.APP_URL ||
+    process.env.RENDER_EXTERNAL_URL ||
+    `http://localhost:${Number(process.env.PORT) || 5000}`,
 
   JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET || 'access_secret_key',
   JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET || 'refresh_secret_key',

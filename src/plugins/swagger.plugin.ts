@@ -1,6 +1,7 @@
 import { FastifyInstance } from "fastify";
 import swagger from "@fastify/swagger";
 import swaggerUI from "@fastify/swagger-ui";
+import { env } from "../config/env";
 
 export async function registerSwagger(app: FastifyInstance) {
   await app.register(swagger, {
@@ -12,8 +13,11 @@ export async function registerSwagger(app: FastifyInstance) {
       },
       servers: [
         {
-          url: "http://localhost:3000",
-          description: "Local development server",
+          url: env.APP_URL,
+          description:
+            env.NODE_ENV === "production"
+              ? "Production server"
+              : "Local development server",
         },
       ],
       components: {
