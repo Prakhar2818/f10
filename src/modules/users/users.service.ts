@@ -11,7 +11,7 @@ export const usersService = {
   getAllUsers: async () => {
     const users = await usersRepository.findAllUsers();
 
-    return users.map((user) => ({
+    return users.map((user: (typeof users)[number]) => ({
       id: user.id,
       fullName: user.fullName,
       email: user.email,

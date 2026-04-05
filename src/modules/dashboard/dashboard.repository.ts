@@ -56,7 +56,7 @@ export const dashboardRepository = {
       orderBy: [{ type: "asc" }, { category: "asc" }],
     });
 
-    return result.map((item) => ({
+    return result.map((item: (typeof result)[number]) => ({
       type: item.type,
       category: item.category,
       total: Number(item._sum.amount || 0),
@@ -143,7 +143,7 @@ export const dashboardRepository = {
       };
     });
 
-    records.forEach((record) => {
+    records.forEach((record: (typeof records)[number]) => {
       const monthIndex = new Date(record.recordDate).getMonth();
       const month = monthNames[monthIndex];
 
